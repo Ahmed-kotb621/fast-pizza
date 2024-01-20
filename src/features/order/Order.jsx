@@ -1,12 +1,14 @@
 // Test ID: IIDSAT
 
-import { useLoaderData } from "react-router-dom";
-import { getOrder } from "../../services/apiRestaurant";
+import { useLoaderData } from 'react-router-dom';
+import { getOrder } from '../../services/apiRestaurant';
+
 import {
   calcMinutesLeft,
   formatCurrency,
   formatDate,
-} from "../../utils/helpers";
+} from '../../utils/helpers';
+import OrderItem from './OrderItem';
 
 function Order() {
   const order = useLoaderData();
@@ -23,29 +25,41 @@ function Order() {
   const deliveryIn = calcMinutesLeft(estimatedDelivery);
 
   return (
-    <div>
-      <div>
-        <h2>Status</h2>
+    <div className="space-y-8 px-6 py-4">
+      <div className="flex flex-wrap items-center justify-between">
+        <h2 className="text-xl font-semibold">Order #{id} status</h2>
 
-        <div>
-          {priority && <span>Priority</span>}
-          <span>{status} order</span>
+        <div className="flex gap-2">
+          {priority && (
+            <span className="rounded-full bg-red-600 px-2 py-1 text-stone-900">
+              Priority
+            </span>
+          )}
+          <span className="rounded-full bg-green-600 px-2 py-1 text-stone-900">
+            {status} order
+          </span>
         </div>
       </div>
 
-      <div>
+      <div className="flex flex-wrap justify-between rounded-md bg-stone-200 p-5">
         <p>
           {deliveryIn >= 0
             ? `Only ${calcMinutesLeft(estimatedDelivery)} minutes left 😃`
-            : "Order should have arrived"}
+            : 'Order should have arrived'}
         </p>
         <p>(Estimated delivery: {formatDate(estimatedDelivery)})</p>
       </div>
-
-      <div>
+      <ul className="divide-y divide-stone-200 border-b border-t">
+        {cart.map((cart) => (
+          <OrderItem item={cart} key={cart.id} />
+        ))}
+      </ul>
+      <div className="space-y-3 rounded-md bg-stone-200 p-5">
         <p>Price pizza: {formatCurrency(orderPrice)}</p>
         {priority && <p>Price priority: {formatCurrency(priorityPrice)}</p>}
-        <p>To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}</p>
+        <p className="text-l font-semibold">
+          To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}
+        </p>
       </div>
     </div>
   );
